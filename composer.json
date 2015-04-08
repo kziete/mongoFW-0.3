@@ -1,0 +1,13 @@
+{
+	"require" : {
+		//"dwoo/dwoo": "2.0b1",
+		"doctrine/dbal": "2.5.1",
+		//"phpmailer/phpmailer": "dev-master",
+		"torophp/torophp": "dev-master",
+		//"weotch/phpthumb": "dev-master"
+	},
+	"autoload": {
+        "psr-4": {"": "core/"}
+    }
+}
+
