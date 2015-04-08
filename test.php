@@ -1,11 +1,5 @@
 <?php
-function mi_autocargador($clase) {
-    include __DIR__ . '/core/' . str_replace('\\', '/', $clase ). '.php';
-}
-
-spl_autoload_register('mi_autocargador');
-
-
+require 'vendor/autoload.php';
 require 'Modelo.php';
 
 $a = ModeloEjemplo::crear();
