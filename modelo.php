@@ -8,7 +8,7 @@ class ModeloEjemplo extends Db\Entidad{
 		return array(
 			'titulo' => new Campo\CampoText,
 			'numero' => new Campo\CampoInteger,
-			'fecha' => new Campo\CampoFechaHora
+			#'fecha' => new Campo\CampoFechaHora
 		);
 	}
 }

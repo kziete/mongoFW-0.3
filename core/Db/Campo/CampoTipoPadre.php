@@ -3,7 +3,7 @@
 class CampoTipoPadre{
 	protected $value;
 	public function setValue($value){
-		$this->validar($value);
+		#$this->validar($value);
 		$this->value = $this->createValue($value);
 	}
 	public function getValue(){

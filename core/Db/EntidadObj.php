@@ -31,13 +31,4 @@ class EntidadObj{
 			echo $k . ": " . $v . "\n";
 		//print_r($this->datos);
 	}
-	public function all(){
-		echo "Trayendome todos los registros\n";
-		return $this;
-	}
-	public function filter(){
-		echo "Filtrados\n";
-		return $this;
-	}
-
 }
