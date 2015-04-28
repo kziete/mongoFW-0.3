@@ -2,7 +2,7 @@
 
 use \Db\Campo as Campo;
 
-class ModeloEjemplo extends Db\Entidad{
+class Noticia extends Db\Entidad{
 
 	public function init(){
 		return array(

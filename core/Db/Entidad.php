@@ -7,13 +7,17 @@ use Iterator;
 use IteratorAggregate;
 
 class Entidad implements ArrayAccess, IteratorAggregate{
+	public function __construct(){
+		$this->table = get_called_class();
+		$this->db = DbHelper::getInstance();
+	}
 	public function crear($params = array()){
 		$campos = $this->init();
 
-		$tabla = get_called_class();
-
-		$obj = new EntidadObj($tabla);
+		$obj = new EntidadObj($this->table);
 		
+		$obj->setCampo("id", new Campo\CampoId());
+
 		foreach($campos as $k => $v){
 			$obj->setCampo($k,$v);			
 		}
@@ -23,30 +27,76 @@ class Entidad implements ArrayAccess, IteratorAggregate{
 		return $obj;
 	}
 
-	public function all(){
-		echo "Trayendome todos los registros\n";
-		return $this;
-	}
-	public function filter(){
-		echo "Filtrados\n";
-		return $this;
+	public function makeQuery(){
+		$sql = "select * from " . $this->table;
+		$params = array();
+		if(!empty($this->filtros)){
+			$where = $this->getWhere($this->filtros);
+			$sql .= $where['where'];
+			$params = $where['params'];
+		}
+		#$sql .= ' where ' . join("=? and ",array_keys($this->filtros)) . "=?";			
+		if($this->orden)
+			$sql .= ' order by ' . $this->orden;
+		$query = $this->db->sql($sql,$params);
+		$this->data = $this->db->fetch($query);
 	}
 
-	public function makeQuery(){
-		$this->data = array(
-			array(
-				'titulo' => 'primero',
-				'numero' => 1
-			),
-			array(
-				'titulo' => 'segundo',
-				'numero' => 2
-			),
-			array(
-				'titulo' => 'tercero',
-				'numero' => 3
-			)
+	public function getWhere($filtros){
+		$wheres = array();
+		$params = array();
+		foreach ($filtros as $field => $value) {
+			$field_parts = explode("__",$field);
+			if($field_parts[1]){
+				switch($field_parts[1]){
+					case 'like':
+						$wheres[] = $field_parts[0] . ' like ?';
+						$params[] = '%' . $value . '%';
+						break;
+					case 'gt':
+						$wheres[] = $field_parts[0] . ' > ?';
+						$params[] = $value;
+						break;
+					case 'gte':
+						$wheres[] = $field_parts[0] . ' >= ?';
+						$params[] = $value;
+						break;
+					case 'lt':
+						$wheres[] = $field_parts[0] . ' < ?';
+						$params[] = $value;
+						break;
+					case 'lte':
+						$wheres[] = $field_parts[0] . ' <= ?';
+						$params[] = $value;
+						break;
+				}
+			}else{
+				$wheres[] = $field . '=?';
+				$params[] = $value;
+			}
+		}
+		return array(
+			'where' => count($wheres) > 0 ? " where " . join(' and ', $wheres) : "",
+			'params' => $params
 		);
+	}
+	public function filter($filtros=array()){
+		$this->resetData();
+		$this->filtros = $filtros;
+		return $this;
+	}
+	public function orderBy($orden='id asc'){
+		$this->resetData();
+		$this->orden = $orden;
+		return $this;
+	}
+	public function rawData(){
+		if(empty($this->data))
+			$this->makeQuery();
+		return $this->data;
+	}
+	public function resetData(){
+		$this->data = array();
 	}
 
 	#IteratorAggregate

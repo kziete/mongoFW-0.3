@@ -1,19 +1,23 @@
 <?php namespace Db;
 
+use Exception;
+
 class EntidadObj{
 
 	private $campos;
-	protected $tabla;
+	private $db;
+	protected $table;
 
-	public function __construct($tabla){
-		$this->tabla = $tabla;
+	public function __construct($table){
+		$this->table = $table;
+		$this->db = DbHelper::getInstance();
 	}
 	public function __get($name){
 		return $this->campos[$name]->getValue();
 	}
 	public function __set($name,$value){
 		if(!isset($this->campos[$name]))
-			throw new Exception($name . " no pertenece al modelo " . $this->tabla);
+			throw new Exception($name . " no pertenece al modelo " . $this->table);
 
 		$this->campos[$name]->setValue($value);
 	}
@@ -26,9 +30,11 @@ class EntidadObj{
 	}
 
 	public function grabar(){
-		echo "Grabando: " . $this->tabla . "\n";
-		foreach($this->campos as $k => $v)
-			echo $k . ": " . $v . "\n";
-		//print_r($this->datos);
+		if($this->id){
+			$this->db->update($this->table,$this->campos,"id=" . $this->id);
+		}else{
+			$this->db->insert($this->table,$this->campos);
+			$this->id = $this->db->lastInsert();
+		}
 	}
 }
