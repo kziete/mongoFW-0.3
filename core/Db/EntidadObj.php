@@ -9,13 +9,16 @@ class EntidadObj{
 		$this->tabla = $tabla;
 	}
 	public function __get($name){
-		return $this->campos[$name];
+		return $this->campos[$name]->getValue();
 	}
 	public function __set($name,$value){
 		if(!isset($this->campos[$name]))
 			throw new Exception($name . " no pertenece al modelo " . $this->tabla);
 
 		$this->campos[$name]->setValue($value);
+	}
+	public function getObj($name){
+		return $this->campos[$name];
 	}
 
 	public function setCampo($nombre,$campo){

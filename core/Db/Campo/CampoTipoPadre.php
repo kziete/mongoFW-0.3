@@ -6,6 +6,9 @@ class CampoTipoPadre{
 		$this->validar($value);
 		$this->value = $this->createValue($value);
 	}
+	public function getValue(){
+		return $this->value;
+	}
 	public function __toString(){
 
 		return (String)$this->value;
